@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Customer\Model\Logger">
+        <plugin disabled="false" name="Yireo_DisableLog2_Plugin_Customer_Logger" type="Yireo\DisableLog2\Plugin\Customer\Logger" />
+    </type>
+    <type name="Magento\PageCache\Model\DepersonalizeChecker">
+        <plugin disabled="false" name="Yireo_DisableLog2_Plugin_PageCache_DepersonalizeChecker" type="Yireo\DisableLog2\Plugin\PageCache\DepersonalizeChecker" />
+    </type>
+</config>

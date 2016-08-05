@@ -1,0 +1,31 @@
+{
+    "name": "yireo/yireo_disablelog2",
+    "license": "OSL-3",
+    "type": "magento2-module",
+    "version": "0.0.1",
+    "homepage": "https://github.com/yireo/Yireo_DisableLogs2",
+    "description": "Magento 2 module to disable customer logging",
+    "keywords":[ "composer-installer", "magento"],
+    "authors": [
+        {
+            "name": "Jisse Reitsma (Yireo)",
+            "email": "jisse@yireo.com"
+        }
+    ],
+    "require": {
+        "magento/framework": "100.*",
+        "php": ">=5.6.0"
+    },
+    "require-dev":{
+        "phpunit/phpunit":"*",
+        "composer/composer":"*@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yireo\\DisableLog2\\": "source"
+        },        
+        "files": [
+            "source/registration.php"
+        ]
+    }
+}
