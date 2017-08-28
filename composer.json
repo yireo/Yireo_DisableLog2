@@ -20,10 +20,10 @@
     },
     "autoload": {
         "psr-4": {
-            "Yireo\\DisableLog2\\": "source"
+            "Yireo\\DisableLog2\\": ""
         },        
         "files": [
-            "source/registration.php"
+            "registration.php"
         ]
     }
 }
