@@ -17,9 +17,12 @@ class Visitor
 {
     public function aroundSave(
         \Magento\Customer\Model\ResourceModel\Visitor $subject,
-        callable $proceed
-    )
-    {
-        return $this;
+        callable $proceed,
+        \Magento\Framework\Model\AbstractModel $object
+    ) {
+        if ($object->getSessionId()) {
+            $object->setId(substr(base_convert($object->getSessionId(), 36, 10), 0, 10));
+        }
+        return $subject;
     }
 }
