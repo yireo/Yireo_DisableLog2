@@ -1,6 +1,6 @@
 {
     "name": "yireo/magento2-disablelog2",
-    "license": "OSL-3",
+    "license": "OSL-3.0",
     "type": "magento2-module",
     "homepage": "https://github.com/yireo/Yireo_DisableLogs2",
     "description": "Magento 2 module to disable customer logging",
