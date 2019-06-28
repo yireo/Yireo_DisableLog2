@@ -8,21 +8,29 @@
  * @license     Open Source License (OSL v3)
  */
 
+declare(strict_types=1);
+
 namespace Yireo\DisableLog2\Plugin\Customer\ResourceModel;
 
+use Magento\Customer\Model\ResourceModel\Visitor as VisitorResourceModel;
+use Magento\Framework\Model\AbstractModel;
+
 /**
- * Class Visitor - Plugin for \Magento\Customer\Model\ResourceModel\Visitor
+ * Class Visitor
+ * @package Yireo\DisableLog2\Plugin\Customer\ResourceModel
  */
 class Visitor
 {
     public function aroundSave(
-        \Magento\Customer\Model\ResourceModel\Visitor $subject,
+        VisitorResourceModel $subject,
         callable $proceed,
-        \Magento\Framework\Model\AbstractModel $object
+        AbstractModel $object
     ) {
         if ($object->getSessionId()) {
-            $object->setId(substr(base_convert($object->getSessionId(), 36, 10), 0, 10));
+            $converted = base_convert($object->getSessionId(), 36, 10);
+            $object->setId($converted);
         }
+
         return $subject;
     }
 }
