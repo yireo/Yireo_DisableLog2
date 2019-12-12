@@ -10,3 +10,4 @@ The following tables are supposed to be free from new insertions:
 - `customer_log`
 - `customer_visitor`
 
+Under Magento 1, this module also prevented information to be logged to `report_*` tables. This has changed in Magento 2: You can disable the setting `reports/options/enabled` (**Reports > General Options > Enable Reports**) for this.
