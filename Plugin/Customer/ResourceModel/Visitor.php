@@ -21,14 +21,25 @@ use Magento\Framework\Model\AbstractModel;
  */
 class Visitor
 {
+    /**
+     * Convert the session ID to an integer between 0 and 4294967295 (#FFFFFFFF)
+     *
+     * @param VisitorResourceModel $subject
+     * @param callable $proceed
+     * @param AbstractModel $object
+     *
+     * @return VisitorResourceModel
+     */
     public function aroundSave(
         VisitorResourceModel $subject,
         callable $proceed,
         AbstractModel $object
     ) {
         if ($object->getSessionId()) {
-            $converted = base_convert($object->getSessionId(), 36, 10);
-            $object->setId($converted);
+            $hexConverted = base_convert($object->getSessionId(), 36, 16);
+            $truncatedHex = substr($hexConverted, 0, 8);
+            $decConverted = base_convert($truncatedHex, 16, 10);
+            $object->setId($decConverted);
         }
 
         return $subject;
