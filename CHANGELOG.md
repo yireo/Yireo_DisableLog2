@@ -6,8 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.5] - 2020-02-25
-### Fixed
-- Convert the session ID to an integer between 0 and 4294967295 (@AntonEvers)
+## [0.0.6] - 29 July 2020
+### Added
+- Magento 2.4 compatibility
 
-CHANGELOG was not kept before this release.
+## [0.0.5] - Undocumented
