@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.7] - 8 March 2022
+### Added
+- Removing menu item to prevent client confusion (@edward-simpson)
+
 ## [0.0.6] - 29 July 2020
 ### Added
 - Magento 2.4 compatibility
