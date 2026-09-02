@@ -1,0 +1,7 @@
+{
+    "module_name": "Yireo_DisableLog2",
+    "composer_name": "yireo/magento2-disablelog2",
+    "sequence": [
+        "Magento_Customer"
+    ]
+}
