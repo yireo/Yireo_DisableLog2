@@ -3,5 +3,7 @@
     "composer_name": "yireo/magento2-disablelog2",
     "sequence": [
         "Magento_Customer"
-    ]
+    ],
+    "phpcs_severity": "9",
+    "phpstan_level": "5"
 }
