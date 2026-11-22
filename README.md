@@ -7,23 +7,31 @@
 ![Latest Version](https://img.shields.io/packagist/v/yireo/magento2-disablelog2)
 <!-- badges.specs.end -->
 
-This module disables various log attempts of the Magento core, improving performance slightly.
+This module disables the visitor and customer logging of the Magento core.
 
 ## Usage
 Just install the module and it will disable some logging.
 
-The following logs will be **disabled** when the `Yireo_DisableLog` module is installed:
+The following logs will be **disabled** when the `Yireo_DisableLog2` module is installed:
 
-- In the customer module the `LogLastLoginAtObserver` class logs a succesfull login, responding to the event `customer_login`.
-- In the customer module the `LogLastLogoutAtObserver` class logs a succesfull logout, responding to the event `customer_logout`.
+- The customer logger `Magento\Customer\Model\Logger`, which is used by the observers `LogLastLoginAtObserver` (event `customer_login`) and `LogLastLogoutAtObserver` (event `customer_logout`) to store the last login and logout time. No rows are added to the table `customer_log`.
+- The saving of visitors via `Magento\Customer\Model\ResourceModel\Visitor`. No rows are added to the table `customer_visitor`.
 
-The following tables are supposed to be free from new insertions:
-- `customer_log`
-- `customer_visitor`
-
-Note that this disables the feature of **Customers -> Now Online**.
+Note that this disables the feature of **Customers > Now Online**, which is removed from the Admin Panel menu. Also, the **Last Logged In** information of customers is no longer updated.
 
 Under Magento 1, this module also prevented information to be logged to `report_*` tables. This has changed in Magento 2: You can disable the setting `reports/options/enabled` (**Reports > General Options > Enable Reports**) for this.
+
+## Does this improve performance?
+A little bit. The gain depends on your shop:
+
+- Writes to `customer_log` only happen when a customer logs in or logs out. Skipping these will hardly be noticeable.
+- Since Magento 2.3, the core already skips saving the visitor for safe requests (like `GET`), unless the session ID has changed. So, writes to `customer_visitor` are only skipped for `POST` requests (adding to the cart, logging in, AJAX calls), for new sessions and for logins.
+- Both tables do not grow anymore, so there is no need to clean them regularly.
+
+If you are not using the **Now Online** feature, there is no need to keep these logs. But do not expect a huge speed boost.
+
+## Visitor ID
+Because the visitor is not saved, there is no auto-increment visitor ID anymore. Instead, a visitor ID (between 1 and 4294967295) is derived from a SHA-256 hash of the session ID. Some features rely on this ID for guests, like the product compare list and the recently viewed products. Because of the limited range of 32 bits, there is a very small chance that two guest sessions get the same visitor ID.
 
 ## Installation
 ### Instructions for using composer
@@ -53,14 +61,13 @@ We recommend `composer` to install this package. However, if you want a manual c
 The Magento 2 core has an excellent logging system: Every time that a customer logs in or out, his/her details are logged. This might lead to a big database size over time. Not everybody wants this: There are
 numerous threads discussing the periodic cleaning of those tables using the SQL statement `TRUNCATE`. But this is only part of the problem.
 
-Besides filling up the database, this logging also causes various extra SQL `INSERT` statements to be made for every pageload. If you have a busy site, this certainly has an impact on database-performance.
+Besides filling up the database, this logging also causes extra SQL `INSERT` and `UPDATE` statements. In Magento 2, this mostly happens for `POST` requests and logins (see above).
 
 Now, if you're relying on those Magento 2 log statistics, you'll just have to accept this as a fact. However, if you're using other external services like Piwik or GoogleAnalytics, this Magento logging is actually
 an unwanted feature.
 
 ### Our extension
-Our extension gives you the power to disable all this Magento 2 logging: Either for all requests being made, or only for search-robots. It disables logging, but also disables the autoincrement flag for certain
-search patterns: The latter is interesting if you are interested in what your real-life customers are actually searching for, while by default search engines mess up these statistics.
+Our extension disables this logging, by using DI plugins to skip the database writes.
 
 ### Technical specifications
 This extension makes use of interceptors (aka plugins) to override various Magento 2 core classes. See the `etc/di.xml` file for details.
