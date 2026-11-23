@@ -44,18 +44,22 @@ Next, enable the new module in Magento:
     ./bin/magento module:enable Yireo_DisableLog2
     ./bin/magento setup:upgrade
 
-Check whether the module is succesfully installed in **Admin > Stores >
-Configuration > Advanced > Advanced**.
+Check whether the module is successfully installed:
+
+    ./bin/magento module:status Yireo_DisableLog2
 
 Done.
 
 ### Instructions for manual copy
 We recommend `composer` to install this package. However, if you want a manual copy instead, these are the steps:
-* Upload the files in the `source/` folder to the folder `app/code/Yireo/DisableLog2` of your site
-* Run `php -f bin/magento module:enable Yireo_DisableLog2`
-* Run `php -f bin/magento setup:upgrade`
-* Flush the Magento cache
+* Copy all files from the root of this repository (or of a downloaded release) to the folder `app/code/Yireo/DisableLog2` of your site, so that the file `app/code/Yireo/DisableLog2/registration.php` exists. The folders `Test/` and `.github/` are not needed.
+* Run `bin/magento module:enable Yireo_DisableLog2`
+* Run `bin/magento setup:upgrade`
+* Run `bin/magento cache:flush`
+* Check the installation with `bin/magento module:status Yireo_DisableLog2`
 * Done
+
+If you get the error `Unknown module(s): 'Yireo_DisableLog2'`, the files are copied to the wrong location: Make sure that the file `registration.php` is placed directly in the folder `app/code/Yireo/DisableLog2/` and not in a subfolder.
 
 ## Backgrounds
 The Magento 2 core has an excellent logging system: Every time that a customer logs in or out, his/her details are logged. This might lead to a big database size over time. Not everybody wants this: There are
