@@ -42,6 +42,17 @@ final class DisableLogTest extends TestCase
         $this->assertSame(0, $this->countRows('customer_log', 'customer_id', self::CUSTOMER_ID));
     }
 
+    /**
+     * @magentoConfigFixture default/customer/disable_log2/keep_customer_log 1
+     */
+    public function testCustomerLoggerWritesToCustomerLogWhenKept(): void
+    {
+        $this->objectManager->get(CustomerLogger::class)
+            ->log(self::CUSTOMER_ID, ['last_login_at' => '2026-01-01 00:00:00']);
+
+        $this->assertSame(1, $this->countRows('customer_log', 'customer_id', self::CUSTOMER_ID));
+    }
+
     public function testLoginAndLogoutObserversDoNotWriteToCustomerLog(): void
     {
         $observer = new Observer([

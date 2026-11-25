@@ -13,9 +13,15 @@ declare(strict_types=1);
 namespace Yireo\DisableLog2\Plugin\Customer;
 
 use Magento\Customer\Model\Logger as OriginalLogger;
+use Yireo\DisableLog2\Config\Config;
 
 class Logger
 {
+    public function __construct(
+        private readonly Config $config,
+    ) {
+    }
+
     /**
      * @param OriginalLogger $subject
      * @param callable $proceed
@@ -29,6 +35,10 @@ class Logger
         mixed $customerId,
         array $data
     ): OriginalLogger {
+        if ($this->config->keepCustomerLog()) {
+            return $proceed($customerId, $data);
+        }
+
         return $subject;
     }
 }
