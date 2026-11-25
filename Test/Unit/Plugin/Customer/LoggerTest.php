@@ -10,14 +10,14 @@ use Yireo\DisableLog2\Plugin\Customer\Logger as CustomerLoggerPlugin;
 
 final class LoggerTest extends TestCase
 {
-    public function testAroundLogDoesNotCallProceed(): void
+    public function testAroundLogDoesNotCallProceedAndReturnsSubject(): void
     {
-        $loggerPlugin = new CustomerLoggerPlugin();
         $customerLogger = $this->createMock(CustomerLogger::class);
         $proceed = function (): void {
             $this->fail('The original log() should not be called');
         };
 
-        $this->assertSame($loggerPlugin, $loggerPlugin->aroundLog($customerLogger, $proceed));
+        $result = (new CustomerLoggerPlugin())->aroundLog($customerLogger, $proceed, 42, ['last_login_at' => 'now']);
+        $this->assertSame($customerLogger, $result);
     }
 }

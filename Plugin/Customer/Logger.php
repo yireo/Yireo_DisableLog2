@@ -14,20 +14,21 @@ namespace Yireo\DisableLog2\Plugin\Customer;
 
 use Magento\Customer\Model\Logger as OriginalLogger;
 
-/**
- * Class Logger - Plugin for \Magento\Customer\Model\Logger
- */
 class Logger
 {
     /**
      * @param OriginalLogger $subject
      * @param callable $proceed
-     * @return $this
+     * @param mixed $customerId
+     * @param array $data
+     * @return OriginalLogger
      */
     public function aroundLog(
         OriginalLogger $subject,
-        callable $proceed
-    ) {
-        return $this;
+        callable $proceed,
+        mixed $customerId,
+        array $data
+    ): OriginalLogger {
+        return $subject;
     }
 }
