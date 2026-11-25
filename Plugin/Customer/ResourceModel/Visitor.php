@@ -13,12 +13,19 @@ declare(strict_types=1);
 namespace Yireo\DisableLog2\Plugin\Customer\ResourceModel;
 
 use Magento\Customer\Model\ResourceModel\Visitor as VisitorResourceModel;
+use Magento\Framework\App\DeploymentConfig;
+use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\Model\AbstractModel;
 
 class Visitor
 {
+    public function __construct(
+        private readonly DeploymentConfig $deploymentConfig,
+    ) {
+    }
+
     /**
-     * Skip saving the visitor, but derive a visitor ID (between 1 and 4294967295) from the full session ID
+     * Skip saving the visitor, but derive a visitor ID (between 1 and 4294967295) from a keyed hash of the session ID
      *
      * @param VisitorResourceModel $subject
      * @param callable $proceed
@@ -44,8 +51,17 @@ class Visitor
      */
     private function getVisitorIdFromSessionId(string $sessionId): int
     {
-        $visitorId = (int)hexdec(substr(hash('sha256', $sessionId), 0, 8));
+        $hash = hash_hmac('sha256', $sessionId, $this->getSecret());
+        $visitorId = (int)hexdec(substr($hash, 0, 8));
 
         return max($visitorId, 1);
+    }
+
+    /**
+     * @return string
+     */
+    private function getSecret(): string
+    {
+        return (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_CRYPT_KEY);
     }
 }
