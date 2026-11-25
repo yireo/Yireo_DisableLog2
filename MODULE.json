@@ -8,5 +8,36 @@
         "Magento_Store"
     ],
     "phpcs_severity": "6",
-    "phpstan_level": "5"
+    "phpstan_level": "5",
+    "php_versions": [
+        "8.1",
+        "8.2",
+        "8.3",
+        "8.4"
+    ],
+    "skip_magento_versions": [],
+    "skip_css_utils": false,
+    "modules": [
+        "Magento_Backend",
+        "Magento_Config",
+        "Magento_Csp",
+        "Magento_Customer",
+        "Magento_Directory",
+        "Magento_Eav",
+        "Magento_Store",
+        "Magento_Theme"
+    ],
+    "components": [],
+    "config": [
+        {
+            "path": "customer/disable_log2/keep_customer_log",
+            "label": "Yireo DisableLog2 > Keep Last Login and Logout Times",
+            "description": ""
+        }
+    ],
+    "tests": {
+        "unit": 9,
+        "integration": 6,
+        "functional": 0
+    }
 }
