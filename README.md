@@ -17,7 +17,16 @@ The following logs will be **disabled** when the `Yireo_DisableLog2` module is i
 - The customer logger `Magento\Customer\Model\Logger`, which is used by the observers `LogLastLoginAtObserver` (event `customer_login`) and `LogLastLogoutAtObserver` (event `customer_logout`) to store the last login and logout time. No rows are added to the table `customer_log`.
 - The saving of visitors via `Magento\Customer\Model\ResourceModel\Visitor`. No rows are added to the table `customer_visitor`.
 
-Note that this disables the feature of **Customers > Now Online**, which is removed from the Admin Panel menu. Also, the **Last Logged In** information of customers is no longer updated.
+Note that this disables the feature of **Customers > Now Online**, which is removed from the Admin Panel menu. The page itself is only hidden from the menu, not removed: admins with access to it can still open it via its URL. It then shows the visitors that were logged before this module was installed, until the daily cron job `visitor_clean` removes them.
+
+Also, the **Last Logged In** information of customers is no longer updated.
+
+## Security: lost audit trail
+The last login and logout times in `customer_log` are also useful when investigating security issues, like a hijacked customer account ("did this customer really log in last night?"). Without this module you get that information for free. If you need it, you can keep this logging:
+
+**Stores > Configuration > Customers > Customer Configuration > Yireo DisableLog2 > Keep Last Login and Logout Times** (config path `customer/disable_log2/keep_customer_log`, default **No**)
+
+With this setting enabled, only the visitor logging (`customer_visitor`) is disabled.
 
 Under Magento 1, this module also prevented information to be logged to `report_*` tables. This has changed in Magento 2: You can disable the setting `reports/options/enabled` (**Reports > General Options > Enable Reports**) for this.
 
@@ -31,7 +40,13 @@ A little bit. The gain depends on your shop:
 If you are not using the **Now Online** feature, there is no need to keep these logs. But do not expect a huge speed boost.
 
 ## Visitor ID
-Because the visitor is not saved, there is no auto-increment visitor ID anymore. Instead, a visitor ID (between 1 and 4294967295) is derived from a SHA-256 hash of the session ID. Some features rely on this ID for guests, like the product compare list and the recently viewed products. Because of the limited range of 32 bits, there is a very small chance that two guest sessions get the same visitor ID.
+Because the visitor is not saved, there is no auto-increment visitor ID anymore. Instead, a visitor ID (between 1 and 4294967295) is derived from an HMAC-SHA256 hash of the session ID, keyed with the encryption key of your shop (`crypt/key` in `app/etc/env.php`). Because of this key, the visitor ID of a session can not be calculated from outside of your shop. If the encryption key changes, the visitor IDs of existing guest sessions change as well.
+
+Some features rely on this ID for guests, like the product compare list and the recently viewed products. Because of the limited range of 32 bits (the size of the `visitor_id` columns in the Magento core), two guest sessions might get the same visitor ID. The chance grows with the number of guests: With 100,000 guest sessions per day, roughly one pair of sessions per day shares the same ID. These guests then share their compare list and recently viewed products, and when one of them logs in, these items are copied to the customer account. Because the visitor table remains empty, the daily cron job `visitor_clean` removes all guest data of this kind every night, which limits this to a single day.
+
+We also recommend to enable `session.use_strict_mode = 1` in your PHP configuration, so that a browser can not choose its own session ID.
+
+If a visitor does not have a session ID (which normally does not happen in the storefront), the visitor is saved as usual, so that it gets a unique visitor ID.
 
 ## Installation
 ### Instructions for using composer
@@ -74,7 +89,7 @@ an unwanted feature.
 Our extension disables this logging, by using DI plugins to skip the database writes.
 
 ### Technical specifications
-This extension makes use of interceptors (aka plugins) to override various Magento 2 core classes. See the `etc/di.xml` file for details.
+This extension makes use of interceptors (aka plugins) to override various Magento 2 core classes. The customer logger plugin is configured globally in `etc/di.xml`. The visitor plugin is only configured for the storefront in `etc/frontend/di.xml`, so that visitors saved in other areas (like the Admin Panel, the API or the CLI) are still saved.
 
 ## PWA compatibility
 This extension changes core behaviour and has no need to become compatible with PWA.
