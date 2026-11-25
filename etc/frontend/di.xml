@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Customer\Model\ResourceModel\Visitor">
+        <plugin disabled="false" name="Yireo_DisableLog2_Plugin_Customer_ResourceModel_Visitor" type="Yireo\DisableLog2\Plugin\Customer\ResourceModel\Visitor" />
+    </type>
+</config>
