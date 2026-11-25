@@ -8,7 +8,7 @@
         "composer-installer",
         "magento"
     ],
-    "version": "0.0.7",
+    "version": "0.1.0",
     "require": {
         "magento/framework": "^102.0|^103.0",
         "magento/module-backend": "^101.0|^102.0",
