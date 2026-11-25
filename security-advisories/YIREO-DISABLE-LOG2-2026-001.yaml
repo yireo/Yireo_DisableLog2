@@ -1,0 +1,35 @@
+schema_version: "1.6.0"
+id: YIREO-DISABLE-LOG2-2026-001
+published: "2026-11-25T00:00:00Z"
+modified: "2026-11-25T00:00:00Z"
+aliases: []
+summary: Predictable visitor ID allows reading and planting guest data of other visitors
+details: >
+  To skip writing to the customer_visitor table, versions up to and including 0.0.7 skipped saving the
+  visitor and derived the visitor ID directly from the session ID (a base36 conversion of the session ID,
+  or no ID at all in the oldest versions). Because Magento accepts session IDs chosen by the client
+  (session.use_strict_mode is not enabled by default), anybody could compute offline a session ID that
+  maps to a chosen visitor ID and use it to read or plant guest data linked to that visitor ID, like the
+  compare list or the recently viewed products. Visitors without a session ID all shared visitor ID 0 and
+  thereby the same compare list. Version 0.1.0 derives the visitor ID from an HMAC-SHA256 of the session ID,
+  keyed with the deployment encryption key (crypt/key), so the mapping can not be calculated outside of the
+  shop, and lets the core save visitors without a session ID so they get a unique visitor ID. Users of older
+  versions should upgrade and are advised to enable session.use_strict_mode in PHP.
+severity:
+  - type: CVSS_V3
+    score: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"
+affected:
+  - package:
+      ecosystem: Packagist
+      name: yireo/magento2-disablelog2
+    ranges:
+      - type: ECOSYSTEM
+        events:
+          - introduced: "0.0.1"
+          - fixed: "0.1.0"
+references:
+  - type: PACKAGE
+    url: https://github.com/yireo/Yireo_DisableLog2
+database_specific:
+  cwe_ids:
+    - CWE-340
