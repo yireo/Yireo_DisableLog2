@@ -26,11 +26,19 @@ final class VisitorTest extends TestCase
         $this->assertSame($subject, $result);
     }
 
-    public function testAroundSaveDoesNotSetIdWithoutSessionId(): void
+    public function testAroundSaveCallsProceedWithoutSessionId(): void
     {
+        $subject = $this->createMock(VisitorResourceModel::class);
         $visitor = $this->createVisitor(null);
-        $this->save($visitor);
+        $proceededWith = null;
+        $proceed = function (AbstractModel $object) use (&$proceededWith, $subject): VisitorResourceModel {
+            $proceededWith = $object;
+            return $subject;
+        };
 
+        $result = $this->createPlugin()->aroundSave($subject, $proceed, $visitor);
+        $this->assertSame($subject, $result);
+        $this->assertSame($visitor, $proceededWith);
         $this->assertNull($visitor->getId());
     }
 

@@ -70,6 +70,18 @@ final class DisableLogTest extends TestCase
         $this->assertSame(0, $this->countRows('customer_visitor', 'visitor_id', $visitorId));
     }
 
+    public function testVisitorWithoutSessionIdIsSaved(): void
+    {
+        /** @var Visitor $visitor */
+        $visitor = $this->objectManager->get(VisitorFactory::class)->create();
+        $visitor->setLastVisitAt('2026-01-01 00:00:00');
+        $this->objectManager->get(VisitorResource::class)->save($visitor);
+
+        $visitorId = (int)$visitor->getId();
+        $this->assertGreaterThan(0, $visitorId);
+        $this->assertSame(1, $this->countRows('customer_visitor', 'visitor_id', $visitorId));
+    }
+
     private function countRows(string $table, ?string $column = null, ?int $value = null): int
     {
         $resource = $this->objectManager->get(ResourceConnection::class);

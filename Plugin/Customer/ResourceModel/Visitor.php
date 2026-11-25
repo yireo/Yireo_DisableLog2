@@ -38,9 +38,11 @@ class Visitor
         AbstractModel $object
     ): VisitorResourceModel {
         $sessionId = (string)$object->getSessionId();
-        if ($sessionId !== '') {
-            $object->setId($this->getVisitorIdFromSessionId($sessionId));
+        if ($sessionId === '') {
+            return $proceed($object);
         }
+
+        $object->setId($this->getVisitorIdFromSessionId($sessionId));
 
         return $subject;
     }
